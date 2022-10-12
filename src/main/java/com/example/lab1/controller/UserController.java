@@ -7,16 +7,20 @@ import com.example.lab1.controller.request.LoginRequest;
 import com.example.lab1.controller.request.UpdateUserRequest;
 import com.example.lab1.controller.response.BaseResponse;
 import com.example.lab1.controller.response.LoginResponse;
+import com.example.lab1.controller.response.UserListResponse;
 import com.example.lab1.controller.response.UserResponse;
 import com.example.lab1.model.dto.UserDto;
+import com.example.lab1.model.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/api/")
+@RequestMapping("/api/user/")
 public class UserController {
    @Autowired
     private UserBusiness userBusiness;
@@ -35,5 +39,9 @@ public class UserController {
        UserDto userDto = userBusiness.loginUser(request);
        return new ResponseEntity<>(new LoginResponse(UserErrorCode.SUCCESS, userDto), HttpStatus.OK);
    }
-
+   @GetMapping("list")
+    public ResponseEntity<BaseResponse> getAllUser() {
+       List<UserDto> userDtos = userBusiness.getAllUsers();
+       return  new ResponseEntity<>(new UserListResponse(UserErrorCode.SUCCESS, userDtos), HttpStatus.OK);
+   }
 }

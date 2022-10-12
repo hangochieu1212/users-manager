@@ -26,10 +26,10 @@ public class UserVerifyRequestServiceImpl implements UserVerifyRequestService {
             throw new UserRestApiException(UserErrorCode.MISSING_FULLNAME_FIELD);
         }
         if(username == null || username.trim().isEmpty()) {
-            throw  new UserRestApiException(UserErrorCode.MISSING_USERNAME_FIELD);
+            throw  new UserRestApiException(AuthErrorCode.MISSING_USERNAME_FIELD);
         }
         if(password == null || password.trim().isEmpty()) {
-            throw new UserRestApiException(UserErrorCode.MISSING_PASSWORD_FIELD);
+            throw new UserRestApiException(AuthErrorCode.MISSING_PASSWORD_FIELD);
         }
         if(email == null || email.trim().isEmpty()) {
             throw new UserRestApiException(UserErrorCode.MISSING_EMAIL_FIELD);
@@ -38,7 +38,7 @@ public class UserVerifyRequestServiceImpl implements UserVerifyRequestService {
             throw new UserRestApiException(UserErrorCode.FULLNAME_INVALID);
         }
         if(!validateField.validUsername(username)) {
-            throw new UserRestApiException(UserErrorCode.USERNAME_INVALID);
+            throw new UserRestApiException(AuthErrorCode.USERNAME_INVALID);
         }
         if(!validateField.validPassword(password)) {
             throw new UserRestApiException(AuthErrorCode.PASSWORD_INVALID);

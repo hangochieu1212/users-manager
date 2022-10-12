@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -49,7 +50,12 @@ public class UserBusinessImpl implements UserBusiness {
 
     @Override
     public List<UserDto> getAllUsers() {
-        return null;
+        List<User> users = userService.getAllUser();
+        List<UserDto> userDtos = new ArrayList<>();
+        users.forEach(user -> {
+            userDtos.add(convertUserToUserDto(user));
+        });
+        return userDtos;
     }
 
     @Override
@@ -94,14 +100,20 @@ public class UserBusinessImpl implements UserBusiness {
     @Override
     public UserDto addUser(AddUserRequest request) {
         userVerifyRequestService.verifyAddUser(request);
-        User user = userService.existUsername(request.getUsername());
-
+        boolean isExistUsername = userService.existUsername(request.getUsername());
+        boolean isExistEmail = userService.existEmail(request.getEmail());
+        if( isExistEmail) {
+            throw new UserRestApiException(UserErrorCode.EMAIL_EXISTED);
+        }
+        if(isExistUsername) {
+            throw new UserRestApiException(UserErrorCode.USERNAME_EXISTED);
+        }
         User newUser = new User();
-        user.setUsername(request.getUsername());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setEmail(request.getEmail());
-        user.setFullname(request.getFullname());
-        userService.saveUser(user);
-        return convertUserToUserDto(user);
+        newUser.setUsername(request.getUsername());
+        newUser.setPassword(passwordEncoder.encode(request.getPassword()));
+        newUser.setEmail(request.getEmail());
+        newUser.setFullname(request.getFullname());
+        userService.saveUser(newUser);
+        return convertUserToUserDto(newUser);
     }
 }
