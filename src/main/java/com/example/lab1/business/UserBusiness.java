@@ -1,7 +1,7 @@
 package com.example.lab1.business;
 
 import com.example.lab1.controller.request.AddUserRequest;
-import com.example.lab1.controller.request.ForgotPasswordRequest;
+import com.example.lab1.controller.request.ForgetPasswordRequest;
 import com.example.lab1.controller.request.LoginRequest;
 import com.example.lab1.controller.request.UpdateUserRequest;
 import com.example.lab1.model.dto.UserDto;
@@ -15,6 +15,6 @@ public interface UserBusiness {
     List<UserDto> getAllUsers();
     UserDto updateUser(int id, UpdateUserRequest request);
     UserDto loginUser(LoginRequest request);
-    UserDto forgotPassword(ForgotPasswordRequest request);
+    boolean forgotPassword(ForgetPasswordRequest request);
     UserDto addUser(AddUserRequest request);
 }

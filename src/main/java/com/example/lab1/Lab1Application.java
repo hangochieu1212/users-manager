@@ -8,13 +8,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootApplication
 public class Lab1Application {
-
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
 	public static void main(String[] args) {
-		SpringApplication.run(Lab1Application.class, args);
+
+		SpringApplication.run(Lab1Application.class, args
+		);
 	}
 
 }

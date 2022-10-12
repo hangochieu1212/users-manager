@@ -3,7 +3,7 @@ package com.example.lab1.business;
 import com.example.lab1.constant.AuthErrorCode;
 import com.example.lab1.constant.UserErrorCode;
 import com.example.lab1.controller.request.AddUserRequest;
-import com.example.lab1.controller.request.ForgotPasswordRequest;
+import com.example.lab1.controller.request.ForgetPasswordRequest;
 import com.example.lab1.controller.request.LoginRequest;
 import com.example.lab1.controller.request.UpdateUserRequest;
 import com.example.lab1.exception.UserRestApiException;
@@ -11,6 +11,7 @@ import com.example.lab1.middleware.UserVerifyRequestService;
 import com.example.lab1.model.dto.UserDto;
 import com.example.lab1.model.entity.User;
 import com.example.lab1.service.UserService;
+import com.example.lab1.util.IDGeneratorUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,6 +29,8 @@ public class UserBusinessImpl implements UserBusiness {
     private UserVerifyRequestService userVerifyRequestService;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private MailBusiness mailBusiness;
 
     @Override
     public UserDto convertUserToUserDto(User user) {
@@ -63,10 +66,7 @@ public class UserBusinessImpl implements UserBusiness {
         userVerifyRequestService.verifyUpdateUser(request);
         User user = userService.findUserById(id);
         if(user != null) {
-            user.setFullname(request.getFullname());
-            user.setUsername(request.getUsername());
             user.setPassword(request.getPassword());
-            user.setEmail(request.getEmail());
             userService.saveUser(user);
             return convertUserToUserDto(user);
         }
@@ -78,7 +78,8 @@ public class UserBusinessImpl implements UserBusiness {
         userVerifyRequestService.verifyLoginUser(request);
         User user = userService.findUserByUsername(request.getUsername());
         if(user != null) {
-            if(user.getPassword().equals(request.getPassword())) {
+            String password = user.getPassword();
+            if(passwordEncoder.matches(request.getPassword(), password)) {
                 user.setLastLogin(new Date());
                 userService.saveUser(user);
                 return convertUserToUserDto(user);
@@ -88,13 +89,21 @@ public class UserBusinessImpl implements UserBusiness {
         throw new UserRestApiException(AuthErrorCode.USERNAME_PASSWORD_INVALID);
     }
     @Override
-    public UserDto forgotPassword(ForgotPasswordRequest request) {
+    public boolean forgotPassword(ForgetPasswordRequest request) {
         userVerifyRequestService.verifyForgotPasswordUser(request);
         User user = userService.findUserByEmail(request.getEmail());
-        if(user != null) {
-            return convertUserToUserDto(user);
+        if(user == null) {
+            throw new UserRestApiException(UserErrorCode.EMAIL_NOT_EXIST);
         }
-        throw new UserRestApiException(UserErrorCode.EMAIL_NOT_EXIST);
+        String username = user.getUsername();
+        String[]  arrayName = user.getFullname().split(" ");
+        String lastName = arrayName[arrayName.length -1];
+        String email = user.getEmail();
+        String newPassword = "Hieu@" + IDGeneratorUtil.gen();
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userService.saveUser(user);
+        mailBusiness.sendForgotPasswordMail(username, email, newPassword, lastName);
+        return true;
     }
 
     @Override

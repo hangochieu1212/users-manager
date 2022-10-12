@@ -26,8 +26,8 @@ public class MailConfig {
         javaMailProperties.put("mail.transport.protocol", "smtp");
         javaMailProperties.put("mail.smtp.auth", "true");
         javaMailProperties.put("mail.smtp.starttls.enable", "true");
-        javaMailProperties.put("mail.smtp.from", "config.mail.username");
-        javaMailProperties.put("mail.debug", "true");
+        javaMailProperties.put("mail.smtp.from", env.getProperty("config.mail.username"));
+        javaMailProperties.put("mail.debug", env.getProperty("config.mail.debug"));
         mailSender.setJavaMailProperties(javaMailProperties);
         return mailSender;
     }

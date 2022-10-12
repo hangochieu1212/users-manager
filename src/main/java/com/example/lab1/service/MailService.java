@@ -1,7 +1,7 @@
 package com.example.lab1.service;
 
-import com.example.lab1.controller.request.ForgotPasswordRequest;
+import com.example.lab1.model.dto.MailDto;
 
 public interface MailService {
-    void sendMail(String email);
+    void sendMail(MailDto dataMail, String templateName);
 }
