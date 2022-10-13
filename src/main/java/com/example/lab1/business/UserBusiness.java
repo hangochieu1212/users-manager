@@ -15,6 +15,6 @@ public interface UserBusiness {
     List<UserDto> getAllUsers();
     UserDto updateUser(int id, UpdateUserRequest request);
     UserDto loginUser(LoginRequest request);
-    boolean forgotPassword(ForgetPasswordRequest request);
+    String forgotPassword(ForgetPasswordRequest request);
     UserDto addUser(AddUserRequest request);
 }

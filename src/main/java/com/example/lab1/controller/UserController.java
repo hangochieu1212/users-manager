@@ -46,11 +46,7 @@ public class UserController {
    }
    @PostMapping("forgot-password")
     public ResponseEntity<BaseResponse> forgotPasswordUser(@RequestBody ForgetPasswordRequest request) {
-       boolean isSuccess = userBusiness.forgotPassword(request);
-       if(isSuccess) {
-           return new ResponseEntity<>(new BaseResponse(UserErrorCode.SUCCESS), HttpStatus.OK);
-       }
-       return new ResponseEntity<>(new BaseResponse(UserErrorCode.FAIL), HttpStatus.OK);
+       String data = userBusiness.forgotPassword(request);
+       return new ResponseEntity<>(new BaseResponse(1, data), HttpStatus.OK);
    }
-
 }

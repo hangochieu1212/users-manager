@@ -89,7 +89,7 @@ public class UserBusinessImpl implements UserBusiness {
         throw new UserRestApiException(AuthErrorCode.USERNAME_PASSWORD_INVALID);
     }
     @Override
-    public boolean forgotPassword(ForgetPasswordRequest request) {
+    public String forgotPassword(ForgetPasswordRequest request) {
         userVerifyRequestService.verifyForgotPasswordUser(request);
         User user = userService.findUserByEmail(request.getEmail());
         if(user == null) {
@@ -103,7 +103,7 @@ public class UserBusinessImpl implements UserBusiness {
         user.setPassword(passwordEncoder.encode(newPassword));
         userService.saveUser(user);
         mailBusiness.sendForgotPasswordMail(username, email, newPassword, lastName);
-        return true;
+        return "Send mail success to " + user.getEmail();
     }
 
     @Override
